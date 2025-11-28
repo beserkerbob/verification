@@ -364,10 +364,14 @@ func (h *Handler) ServeHTTP(w http.ResponseWriter, r *http.Request, next caddyht
 			zap.String("host", r.Host),
 		)
 		r.Header.Set(h.RequestHeader, "false")
-		r.Header.Set(h.ResponseHeader, "false")
-		caddyhttp.SetVar(r.Context(), h.VarName, "false")
-
 	}
+	if h.ResponseHeader != "" && isBlocked {
+		w.Header().Set(h.ResponseHeader, "false")
+	}
+	if h.VarName != "" && isBlocked {
+		caddyhttp.SetVar(r.Context(), h.VarName, "false")
+	}
+
 	if h.RequestHeader != "" && !isBlocked {
 		r.Header.Set(h.RequestHeader, "true")
 	}
