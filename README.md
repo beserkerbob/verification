@@ -1,5 +1,7 @@
 ## Caddy JA4 Module (WIP)
 
+First copy is based upon work by matt-: https://github.com/matt-/caddy-ja4/blob/main/handler.go
+
 A caddy plugin for [JA4](https://github.com/FoxIO-LLC/ja4) hashes.
 
 ### About JA4 Fingerprints

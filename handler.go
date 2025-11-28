@@ -351,31 +351,30 @@ func (h *Handler) ServeHTTP(w http.ResponseWriter, r *http.Request, next caddyht
 	isBlocked := h.blockedSet[fingerprint]
 	h.blockedMu.RUnlock()
 
-	if isBlocked {
+	h.logger.Debug("JA4 fingerprint extracted successfully",
+		zap.String("fingerprint", "true"),
+		zap.String("remote_addr", r.RemoteAddr),
+		zap.String("host", r.Host),
+	)
+
+	if h.RequestHeader != "" && isBlocked {
 		h.logger.Warn("request blocked due to JA4 fingerprint",
 			zap.String("fingerprint", fingerprint),
 			zap.String("remote_addr", r.RemoteAddr),
 			zap.String("host", r.Host),
 		)
-		return caddyhttp.Error(http.StatusForbidden, fmt.Errorf("request blocked: JA4 fingerprint %s is not allowed", fingerprint))
+		r.Header.Set(h.RequestHeader, "false")
 	}
-
-	h.logger.Debug("JA4 fingerprint extracted successfully",
-		zap.String("fingerprint", fingerprint),
-		zap.String("remote_addr", r.RemoteAddr),
-		zap.String("host", r.Host),
-	)
-
-	if h.RequestHeader != "" {
-		r.Header.Set(h.RequestHeader, fingerprint)
+	if h.RequestHeader != "" && !isBlocked {
+		r.Header.Set(h.RequestHeader, "true")
 	}
 
 	if h.ResponseHeader != "" {
-		w.Header().Set(h.ResponseHeader, fingerprint)
+		w.Header().Set(h.ResponseHeader, "true")
 	}
 
 	if h.VarName != "" {
-		caddyhttp.SetVar(r.Context(), h.VarName, fingerprint)
+		caddyhttp.SetVar(r.Context(), h.VarName, "true")
 	}
 
 	return next.ServeHTTP(w, r)
