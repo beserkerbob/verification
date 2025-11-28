@@ -351,8 +351,8 @@ func (h *Handler) ServeHTTP(w http.ResponseWriter, r *http.Request, next caddyht
 	isBlocked := h.blockedSet[fingerprint]
 	h.blockedMu.RUnlock()
 
-	h.logger.Debug("JA4 fingerprint extracted successfully",
-		zap.String("fingerprint", "true"),
+	h.logger.Info("JA4 fingerprint extracted successfully",
+		zap.String("fingerprint", fingerprint),
 		zap.String("remote_addr", r.RemoteAddr),
 		zap.String("host", r.Host),
 	)
