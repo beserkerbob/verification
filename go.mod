@@ -1,4 +1,4 @@
-module github.com/matt-/caddy-ja4
+module github.com/beserkerbob/verification
 
 go 1.25
 
